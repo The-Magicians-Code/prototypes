@@ -8,13 +8,14 @@
 </head>
 
 <body>
-    <a href="/web/index2.html">Web prototype</a>
+    <!-- <a href="/web/index2.html">Web prototypes</a> -->
     <script>
         // Directory Indexing
         // https://stackoverflow.com/a/53218452/14939378
         (async () => {
-            const response = await fetch('https://api.github.com/repos/the-magicians-code/prototypes/contents/web/');
+            const response = await fetch('https://api.github.com/repos/the-magicians-code/prototypes/tree/master/contents/web/');
             const data = await response.json();
+            console.log(data.message)
             let htmlString = '<ul>';
 
             for (let file of data) {
