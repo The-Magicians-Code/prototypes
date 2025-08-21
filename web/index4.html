@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Seamless Rainbow Glow</title>
+    <style>
+        :root {
+            --height: 52px;
+            /* thickness */
+            --speed: 18s;
+            /* loop speed */
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            background: #1c1513;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            text-align: center;
+        }
+
+        .glow-strip {
+            position: fixed;
+            inset: 0 0 auto 0;
+            /* top edge */
+            height: var(--height);
+            pointer-events: none;
+            z-index: 999;
+            -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 0%, transparent 100%);
+            overflow: hidden;
+        }
+
+        .glow-strip::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            /* rich rainbow base; we won't move it */
+            background: linear-gradient(90deg,
+                    hsl(0, 100%, 60%),
+                    hsl(45, 100%, 60%),
+                    hsl(90, 100%, 60%),
+                    hsl(150, 100%, 60%),
+                    hsl(200, 100%, 60%),
+                    hsl(260, 100%, 65%),
+                    hsl(300, 100%, 65%),
+                    hsl(360, 100%, 60%));
+            filter: blur(0.3px);
+            animation: hueLoop var(--speed) linear infinite;
+            will-change: filter;
+        }
+
+        @keyframes hueLoop {
+            from {
+                filter: hue-rotate(0deg) blur(0.3px);
+            }
+
+            to {
+                filter: hue-rotate(360deg) blur(0.3px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .glow-strip::before {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow-strip"></div>
+    <main>
+        <h1>Seamless Top Rainbow Glow</h1>
+        <p>Hue-rotated loop (no visible reset).</p>
+    </main>
+</body>
+
+</html>

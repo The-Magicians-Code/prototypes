@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Top Glow Strip</title>
+    <style>
+        :root {
+            --core-height: 6px;
+            /* crisp line thickness */
+            --bloom-height: 52px;
+            /* how far the glow bleeds down */
+            --blur: 28px;
+            /* softness of the bloom */
+            --speed: 18s;
+            /* color cycle speed */
+            --bg: #231a1a;
+            /* demo page background */
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: #e9e6e3;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+
+        /* === The glow strip === */
+        .top-glow {
+            position: relative;
+            /* not pinned; participates in normal flow */
+            width: 100%;
+            height: var(--core-height);
+            background: linear-gradient(90deg,
+                    #ff0033, #ff7a00, #ffd400, #3ed67b, #00d5ff, #0070ff, #7a3cff, #ff3bd4, #ff0033);
+            filter: saturate(120%);
+            animation: hue var(--speed) linear infinite;
+            z-index: 999;
+        }
+
+        /* Soft bloom that spills downward */
+        .top-glow::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: var(--bloom-height);
+            background: inherit;
+            /* same gradient as the core */
+            filter: blur(var(--blur)) opacity(0.9);
+            transform: translateY(calc(var(--core-height) / 2));
+            pointer-events: none;
+        }
+
+
+        @keyframes hue {
+            to {
+                filter: saturate(120%) hue-rotate(360deg);
+            }
+        }
+
+        /* Demo content */
+        main {
+            max-width: 880px;
+            margin: 120px auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        p {
+            opacity: .8;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-glow"></div>
+
+    <main>
+        <h1>A Designer's Guide to SwiftUI</h1>
+        <p>SwiftUI is a powerful tool for designers. You don’t need to be a 10× engineer to get a lot from the
+            framework. Using SwiftUI you can do some truly amazing things.</p>
+        <p style="margin-top: 50vh; opacity:.6">Scroll for more…</p>
+        <div style="height:100vh"></div>
+    </main>
+</body>
+
+</html>
