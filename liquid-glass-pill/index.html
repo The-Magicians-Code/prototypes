@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Liquid Glass Pill — Prototype</title>
+  <link rel="stylesheet" href="./pill.css" />
+  <!--
+    Liquid-glass technique by Chris Feijoo (kube.io).
+    Refraction approach explained at https://kube.io/blog/liquid-glass-css-svg.
+    Implementation here is original.
+  -->
+</head>
+<body>
+
+  <nav class="lg-pill" id="lg-pill">
+    <a class="lg-pill__brand" href="#home">Brand</a>
+    <ul class="lg-pill__nav">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <header id="home" class="hero">
+    <h1>Brand &mdash; Portfolio</h1>
+    <p class="hero__tagline">A scrollable demo of a refractive header pill.</p>
+  </header>
+
+  <main>
+    <section id="work" class="page-section">
+      <h2>Work</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac erat ante. Nulla varius enim quis tortor pellentesque, eget hendrerit augue volutpat. Donec porta enim eget tortor luctus, eget aliquam metus rhoncus. Aliquam erat volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris ut velit at nibh dictum suscipit. Phasellus a est tortor. Quisque feugiat, leo eu efficitur ornare, mi nibh maximus felis, sed varius lectus magna at risus. Donec quis tortor non magna posuere placerat ut at ante.</p>
+      <p>Sed pharetra, magna vel maximus condimentum, urna ipsum bibendum nibh, in finibus elit risus a sapien. Cras in lacus eget ante semper sodales. Curabitur faucibus magna in tortor luctus, ut suscipit dolor congue. Integer non sem ac magna placerat suscipit. Suspendisse potenti. Aliquam erat volutpat. In hac habitasse platea dictumst. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla facilisi. Vivamus sit amet pretium nibh. Maecenas pulvinar ligula nec urna sodales, ac vehicula urna scelerisque.</p>
+    </section>
+
+    <section id="about" class="page-section page-section--alt">
+      <h2>About</h2>
+      <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla. Donec sed odio dui. Maecenas faucibus mollis interdum. Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor. Etiam porta sem malesuada magna mollis euismod.</p>
+      <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Vestibulum id ligula porta felis euismod semper. Donec sed odio dui. Sed posuere consectetur est at lobortis. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum. Cras mattis consectetur purus sit amet fermentum. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
+    </section>
+
+    <section id="contact" class="page-section">
+      <h2>Contact</h2>
+      <p>Etiam porta sem malesuada magna mollis euismod. Donec ullamcorper nulla non metus auctor fringilla. Cras mattis consectetur purus sit amet fermentum. Donec sed odio dui. Maecenas sed diam eget risus varius blandit sit amet non magna. Donec ullamcorper nulla non metus auctor fringilla. Curabitur blandit tempus porttitor. Aenean lacinia bibendum nulla sed consectetur. Cras justo odio, dapibus ac facilisis in, egestas eget quam.</p>
+      <p>Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Sed posuere consectetur est at lobortis. Donec id elit non mi porta gravida at eget metus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+    </section>
+  </main>
+
+  <!--
+    Singleton SVG <defs> for the liquid-glass filter; pill.js fills feImage
+    hrefs at runtime.
+
+    NOTE: this prototype is single-pill only. The filter id and feImage ids
+    are global; rendering more than one pill on this page would collide.
+    For multi-pill use, see ASTRO-PORT.md section 7 (per-instance filters).
+  -->
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <filter id="lg-pill-filter" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blurred_source" />
+        <feImage id="lg-pill-disp" href="" result="disp_map" />
+        <feDisplacementMap in="blurred_source" in2="disp_map" scale="0" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+        <feColorMatrix in="displaced" type="saturate" values="4" result="displaced_sat" />
+        <feImage id="lg-pill-spec" href="" result="spec_layer" />
+        <feComposite in="displaced_sat" in2="spec_layer" operator="in" result="spec_masked" />
+        <feComponentTransfer in="spec_layer" result="spec_faded">
+          <feFuncA type="linear" slope="0.4" />
+        </feComponentTransfer>
+        <feBlend in="spec_masked" in2="displaced" mode="normal" result="with_sat" />
+        <!-- Final node: no `result` attribute — implicitly the filter's output. -->
+        <feBlend in="spec_faded" in2="with_sat" mode="normal" />
+      </filter>
+    </defs>
+  </svg>
+
+  <script src="./pill.js"></script>
+</body>
+</html>

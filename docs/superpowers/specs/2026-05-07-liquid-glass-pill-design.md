@@ -52,19 +52,22 @@ Files share knowledge of the pill's pixel dimensions. The CSS owns the source-of
 - Inside: left-side text logo "Brand"; right-side 4 nav anchors (Home / Work / About / Contact)
 - Anchors point to `#home`, `#work`, `#about`, `#contact` on the page; CSS `scroll-behavior: smooth`
 
-**Filter parameters (tuned for a thin header strip — different from the original demo which targets a square lens):**
-- Bezel width: 10 px (small relative to 52 px height; preserves a flat center where logo and nav text sit unrefracted)
+**Filter parameters (final values — tuned during smoke testing for a portfolio-grade visible refraction; the prototype exposes them as CSS custom properties so they can be re-tuned by editing `pill.css` rather than hunting through JS):**
+
+- Bezel width: **20 px** (wide — covers most of the 26 px corner radius, so the rim curl extends well into the body of the pill rather than being a thin halo at the edge)
 - Surface profile: `convex_squircle` (matches upstream's default; gives a soft bulge at the rim)
-- Glass thickness: 30
-- Index of refraction (IOR): 1.5
+- Glass thickness: **80** (thick — produces dramatic refraction visible on text passing under the pill; the upstream demo uses 30, but a header pill placed over varied content benefits from a more pronounced effect)
+- Index of refraction (IOR): 1.5 (standard glass)
+- Uniform-slab shift: **0** (knob exists in CSS as `--lg-uniform-shift` for an Apple-style tilted-slab effect on top of the rim curl, but the default is off — the slab adds a directional bias that reads as a "drift" rather than glass thickness; revisit if the rim curl alone isn't producing the desired look)
 - Specular saturation: 4
 - Specular opacity: 0.4 (subtle, not glaring)
+- Specular light direction: **straight up (π/2)**, not the upstream's upper-right (π/3); a top-center light keeps the rim brightness symmetric left-and-right, which prevents a perceptually asymmetric "leans rightward" reading of the otherwise-symmetric refraction
 - Tint: 6% white
-- Blur on backdrop: 0.3 (slight)
+- Blur on backdrop: **1.5** stddev (heavier than upstream's 0.3 — gives the pill a frosted-glass quality similar to Apple's "Liquid Glass" aesthetic without losing the refraction underneath)
 - Inner shadow: white-ish, blur 12, spread -3
 - Outer shadow: blur 18
 
-These are starting values. The prototype includes them as CSS custom properties so they can be tuned by editing `pill.css` rather than hunting through JS.
+**Pixel-grid symmetry fix:** the corner-relative pixel mapping in `generateDisplacementMap` and `generateSpecularMap` samples at *pixel centers* (`px + 0.5`, `py + 0.5`) rather than pixel corners. On an even-width pill (e.g., 480 wide), the integer-pixel grid is intrinsically asymmetric across the geometric center, which without the half-pixel offset produces a 1-pixel-wide band of stronger refraction at one rim than the other. Sampling at pixel centers places both rims at `dist = r − 0.5` symmetrically and guarantees mirror-perfect displacement maps (every left/right pair sums to exactly 256 in the R channel).
 
 ## Page design
 

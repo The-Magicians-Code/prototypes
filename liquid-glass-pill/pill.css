@@ -1,0 +1,146 @@
+:root {
+  --pill-w: 480px;
+  --pill-h: 52px;
+  --pill-r: 26px;
+  --pill-tint: rgba(255, 255, 255, 0.06);
+  --pill-inner-shadow: inset 0 0 12px -3px rgba(255, 255, 255, 0.6);
+  --pill-outer-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.35);
+  --pill-bg-url: url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop');
+
+  /* Refraction tunables — read by pill.js via getComputedStyle. Edit here,
+     not in JS. Unitless because pill.js does parseFloat() and uses them as
+     plain numbers. */
+  --lg-thickness: 80;
+  --lg-bezel: 20;
+  --lg-ior: 1.5;
+  /* Uniform horizontal slab-refraction shift, in *visible screen pixels*.
+     Adds a consistent shift across the entire pill on top of the bezel rim
+     curl. Kept as a knob in case the slab effect is wanted later, but the
+     default is 0 (pure kube.io rim curl) because the directional bias of
+     a non-zero slab tends to read as a "drift" rather than glass thickness.
+     Set to ±5–10 if you want the Apple-style tilted-slab look. */
+  --lg-uniform-shift: 0;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 300;
+  color: #1c1c1e;
+  background: #f5f5f7;
+}
+
+/* Pill: positioning + frosted-glass fallback that works in Safari + Firefox */
+.lg-pill {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--pill-w);
+  height: var(--pill-h);
+  border-radius: var(--pill-r);
+  background: var(--pill-tint);
+  box-shadow: var(--pill-inner-shadow), var(--pill-outer-shadow);
+
+  /* Frosted-glass fallback */
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  z-index: 100;
+}
+
+/* Real refractive lens — Chromium only (overrides the blur fallback).
+   Set both prefixed and unprefixed inside the @supports block so we don't
+   leave the -webkit blur active on browsers that match this support query. */
+@supports (backdrop-filter: url(#lg-pill-filter)) {
+  .lg-pill {
+    -webkit-backdrop-filter: url(#lg-pill-filter);
+    backdrop-filter: url(#lg-pill-filter);
+  }
+}
+
+.lg-pill__brand {
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  color: #1c1c1e;
+  letter-spacing: 0.02em;
+}
+
+.lg-pill__nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 18px;
+}
+
+.lg-pill__nav a {
+  font-size: 13px;
+  text-decoration: none;
+  color: #1c1c1e;
+  opacity: 0.85;
+}
+
+.lg-pill__nav a:hover { opacity: 1; }
+
+/* Hero with fixed background — gives the pill a colorful backdrop to refract */
+.hero {
+  height: 100vh;
+  background: var(--pill-bg-url) center/cover no-repeat fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.4);
+}
+
+.hero h1 {
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 200;
+  margin: 0;
+}
+
+.hero__tagline {
+  font-size: 18px;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+/* Page sections */
+.page-section {
+  padding: 80px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-section--alt {
+  background: #ffffff;
+  max-width: 100%;
+  margin: 0;
+  padding: 80px 24px;
+}
+
+.page-section--alt > * { max-width: 800px; margin-left: auto; margin-right: auto; }
+
+.page-section h2 {
+  font-size: 36px;
+  font-weight: 300;
+  margin-top: 0;
+}
+
+.page-section p {
+  line-height: 1.7;
+  font-size: 16px;
+  margin-bottom: 1em;
+}
