@@ -17,9 +17,9 @@ Build a Chromium-only prototype that places a refractive **liquid-glass header p
 
 ## Non-Goals
 
-- Not WebGL. SVG/`backdrop-filter` only. (Chromium-only is acceptable; a portfolio header that degrades gracefully in non-Chromium is a real-site concern, not a prototype concern.)
+- Not WebGL. SVG/`backdrop-filter` only.
 - Not a Three.js dependency.
-- Not full responsive design / mobile-first work. The prototype targets desktop Chrome viewport.
+- Not full responsive design / mobile-first work. The prototype targets a desktop viewport.
 - Not actually integrating into the user's real portfolio. That's a separate spec.
 - Not a copy-paste of the upstream `liquid-glass` demo's code. We re-implement the displacement-map generation from the published physics.
 
@@ -132,7 +132,23 @@ Sections:
    </Layout>
    ```
 
-9. **Caveats:** Chromium-only (Safari/Firefox don't support SVG `feDisplacementMap` via `backdrop-filter`); you'll want a fallback. Recommended fallback: detect support with a feature query (`@supports (backdrop-filter: url(#x))`) and fall back to a solid translucent pill in non-Chromium browsers.
+9. **Cross-browser strategy.** Chromium gets the full refractive lens. Safari and Firefox don't support SVG `feDisplacementMap` referenced via `backdrop-filter: url(...)`, but they do support `backdrop-filter: blur(...) saturate(...)` (Safari needs the `-webkit-` prefix on older versions). The prototype layers two CSS rules:
+
+   ```css
+   .lg-pill {
+     /* Frosted-glass fallback — Safari, Firefox, Chromium */
+     -webkit-backdrop-filter: blur(20px) saturate(1.5);
+     backdrop-filter: blur(20px) saturate(1.5);
+   }
+   @supports (backdrop-filter: url(#lg-pill-filter)) {
+     .lg-pill {
+       /* Real refractive lens — Chromium only (overrides the blur above) */
+       backdrop-filter: url(#lg-pill-filter);
+     }
+   }
+   ```
+
+   Note: the `@supports (backdrop-filter: url(#x))` query is a *best-effort* probe and may return `true` in browsers that don't actually render the SVG filter correctly. If that turns out to be a problem in practice, the implementation can switch to a JS-based detection (e.g., test `CSS.supports` plus a UA sniff for known-broken combinations). We'll cross that bridge only if smoke testing reveals a real failure mode in Safari TP or Firefox Nightly.
 
 ## Attribution and licensing
 
@@ -165,7 +181,8 @@ The displacement-map generation algorithm is the standard one explained in Chris
 
 ## Error handling
 
-- **No backdrop-filter support** (older browsers): pill renders as a plain rounded rectangle with the inner shadow + tint. Acceptable degraded state — the design intentionally has visible chrome even without the lens effect.
+- **No SVG-filter support but `backdrop-filter: blur()` works** (Safari, Firefox): pill renders as frosted glass — `blur(20px) saturate(1.5)` over the backdrop, plus the same inner shadow and tint as the Chromium version. This is the *intended* fallback, not a degraded state.
+- **No `backdrop-filter` support at all** (older browsers): pill renders as a plain rounded rectangle with the inner shadow + tint. Acceptable degraded state — the design intentionally has visible chrome even without any lens effect.
 - **Canvas generation failure** (extremely unlikely on desktop): `pill.js` catches the error, logs a console warning, and leaves the `href` empty so the filter renders pass-through. Pill still works as a translucent shape.
 - **Window resize:** `pill.js` debounces resize with a 100 ms timer and re-runs the filter generation only if the pill's computed width/height changed.
 
@@ -177,7 +194,7 @@ Manual smoke test in Chrome:
 2. Verify the pill is visible centered at top, with the refraction effect: scrolling the page should make the pill bend the underlying content.
 3. Verify each nav anchor smooth-scrolls to its section.
 4. Resize the window: pill stays centered; if the pill's CSS-computed dimensions change (e.g., via media query — there are none in v1), the filter re-generates.
-5. Open in Safari and Firefox: pill renders as a plain translucent rounded rectangle (no refraction). Acceptable degraded state.
+5. Open in Safari and Firefox: pill renders as frosted glass (`backdrop-filter: blur(20px) saturate(1.5)` plus inner shadow and tint), no refraction. This is the intended fallback.
 
 No automated tests — this is a static demo prototype.
 
@@ -199,7 +216,7 @@ The implementation plan should cover:
 4. Wire the pill nav to smooth-scroll anchors.
 5. Write `ASTRO-PORT.md` covering all 9 sections above.
 6. Smoke test in Chrome via MCP (pill renders, refraction visible, nav scrolls, no console errors).
-7. Manual user check in Safari + Firefox (degrades to plain pill — acceptable).
+7. Manual user check in Safari + Firefox: confirm the frosted-glass fallback (blur + saturate) renders, not a flat translucent shape.
 8. Single end-of-pipeline commit.
 
 Hand off to the `writing-plans` skill.
