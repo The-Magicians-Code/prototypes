@@ -3,7 +3,7 @@
 **Date:** 2026-05-07
 **Source:** https://liquid-glass-eta.vercel.app/ (Vercel-hosted demo; upstream repo URL TBD during fetch)
 **Target:** `prototypes/liquid-glass/`
-**Status:** Approved (option A from brainstorming companion)
+**Status:** Implemented in `prototypes/liquid-glass/` — see plans/2026-05-07-liquid-glass-port.md
 
 ## Goal
 
@@ -12,7 +12,7 @@ Reproduce the Liquid Glass demo locally inside `prototypes/`, preserving both re
 ## Why
 
 The user wants a runnable copy of the demo for two reasons:
-1. Reference implementation they can read, modify, and learn from offline.
+1. Reference implementation they can read, modify, and run locally. (Note: not strictly offline — Three.js loads from cdnjs and the default background loads from Unsplash. Both can be vendored later if true offline support is needed.)
 2. Foundation for any future integration into other projects (personal site, crockpot, etc.) — but that's out of scope here.
 
 ## Non-Goals
@@ -119,7 +119,7 @@ Manual smoke test only — this is a static demo, not application code:
    - Drag is smooth.
    - "Switch to WebGL →" link goes to `webgl.html`.
 2. **WebGL path:** Open `webgl.html` in Chrome, Safari, and Firefox. Same checks as above. Verify:
-   - Renders identically across all three browsers.
+   - Renders functionally equivalent across all three browsers (lens visible, drag works, sliders update the lens). Pixel-identical output is not required and is unlikely given browser-specific WebGL precision differences.
    - "← Switch to SVG version" link goes to `index.html`.
 3. **No automated tests** — this is a demo with no entry points to exercise programmatically.
 
