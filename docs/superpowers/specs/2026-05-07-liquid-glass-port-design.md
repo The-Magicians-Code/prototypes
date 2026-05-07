@@ -1,7 +1,7 @@
 # Liquid Glass Port — Design Spec
 
 **Date:** 2026-05-07
-**Source:** https://liquid-glass-eta.vercel.app/ (Vercel-hosted demo; upstream repo URL TBD during fetch)
+**Source:** https://liquid-glass-eta.vercel.app/ (Vercel-hosted demo by Chris Feijoo / kube.io; upstream code not publicly released — see https://kube.io/blog/liquid-glass-css-svg)
 **Target:** `prototypes/liquid-glass/`
 **Status:** Implemented in `prototypes/liquid-glass/` — see plans/2026-05-07-liquid-glass-port.md
 
@@ -79,7 +79,7 @@ Three small adjustments — all explicit:
    - One-line note on browser support: SVG version requires Chromium; WebGL version is universal.
    - Link back to upstream demo + license attribution.
 
-2. **License attribution.** The new port needs an attribution to upstream. **Decision:** Add a `## Credit` section in `README.md` linking to the upstream demo and naming the original author (resolved during fetch). If the upstream repo declares a license (MIT, Apache, etc.), include a copy in `prototypes/liquid-glass/LICENSE`; if no license is found, the README will state the source URL and that the port is for personal reference only.
+2. **License attribution.** The upstream is **not open-sourced** as of implementation — author Chris Feijoo stated in [the blog post](https://kube.io/blog/liquid-glass-css-svg) that the code "needs a cleanup pass and perf work before any possible open-source release." **Outcome:** no `LICENSE` file was created; `README.md` includes a `## Credit` section naming Chris Feijoo and linking to the demo + blog, and a `## License` section that explicitly marks the local copy as personal reference only — not for redistribution — and directs anyone who wants to use the code to contact the author or wait for the official open-source release.
 
 3. **Cross-link sanity check (no change expected).** The upstream "Switch to SVG / WebGL" buttons point to `./` and `./webgl.html`, which resolve correctly when the directory is served as root. Listed here for awareness — only fix if the smoke test reveals a break.
 
@@ -125,9 +125,11 @@ Manual smoke test only — this is a static demo, not application code:
 
 ## Open Questions
 
-None expected. The port is mechanical. If issues surface during implementation:
-- Cross-link paths might break if the dev server roots somewhere unexpected → fix to absolute paths if so.
-- License clarity — check upstream repo before claiming MIT.
+None remaining at completion.
+
+Resolved during implementation:
+- **License clarity:** upstream is not open-sourced (no public repo, author hasn't released the code). README documents the personal-reference status; no `LICENSE` file created.
+- **Cross-link paths:** verified by smoke test — `./` and `./webgl.html` resolve correctly when the directory is served at root. No change needed.
 
 ## Implementation Plan (handoff to writing-plans)
 
